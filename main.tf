@@ -10,12 +10,14 @@ resource "google_compute_network" "main" {
 
 resource "google_compute_subnetwork" "main_subnet" {
   name				= "main-subnet"
+  depends_on			= [google_compute_network.main]
   ip_cidr_range			= "10.0.0.0/24"
   network			= "main"
 }
 resource "google_compute_firewall" "tcp_firewall" {
  name			        = "tcp"
  network		        = "main"
+ depends_on			= [google_compute_network.main]
 
  allow {
    protocol		        = "tcp"
@@ -29,6 +31,7 @@ resource "google_compute_firewall" "http_firewall" {
  network                        = "main"
  description			= "Allow HTTP traffic"
  target_tags			= ["http-server"]
+ depends_on			= [google_compute_network.main]
 
  allow {
    protocol                     = "tcp"
@@ -41,6 +44,7 @@ resource "google_compute_firewall" "ssh_firewall" {
  name                           = "ssh"
  network                        = "main"
  priority			= 65534
+ depends_on                     = [google_compute_network.main]
  allow {
    protocol                     = "tcp"
    ports                        = ["22"]
@@ -51,9 +55,8 @@ resource "google_compute_firewall" "ssh_firewall" {
 resource "google_compute_instance_template" "tf-instance-template" {
  name			        = "tf-instance-template"
  description			= "Instance Template with existing boot disk image"
-
  machine_type			= "e2-medium"
-
+ depends_on                     = [google_compute_subnetwork.main_subnet]
  disk {
    source_image			= "image-todo"
  }
@@ -108,7 +111,7 @@ resource "google_compute_backend_service" "lb-backend-service" {
   protocol			= "HTTP"
   enable_cdn			= true
   timeout_sec			= 30
-  load_balancing_scheme		= "EXTERNAL"
+  load_balancing_scheme		= "EXTERNAL_MANAGED"
   backend{
     group			= google_compute_instance_group_manager.todo-instance-group.instance_group
   }
