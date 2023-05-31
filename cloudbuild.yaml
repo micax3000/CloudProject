@@ -8,3 +8,5 @@ steps:
   - id: 'terraform apply'
     name: 'hashicorp/terraform:1.4.6'
     script: terraform apply --auto-approve
+options:
+  logging: CLOUD_LOGGING_ONLY
