@@ -65,7 +65,17 @@ resource "google_compute_instance_template" "tf-instance-template" {
    access_config {}
  }
  tags				= ["http-server"]
- metadata_startup_script	= <<-SCRIPT echo "NEWNEWNEW" && cd /home/milan_veljkovic0097/cloud_student_internship/frontend && cat > .env.development <<EOF REACT_APP_API_URL=http://$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip):3001/api EOF && docker-compose build && docker-compose up   SCRIPT
+ metadata_startup_script	= <<-SCRIPT
+        #!/bin/bash
+	echo "NEWNEWNEW"
+	cd /home/milan_veljkovic0097/cloud_student_internship/frontend
+	ls
+	cat > .env.development <<EOF
+	REACT_APP_API_URL=http://$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip):3001/api
+	EOF
+	docker-compose build
+	docker-compose up          
+    SCRIPT
 }
 resource "google_compute_instance_from_template" "instance-tf" {
  depends_on			= [google_compute_instance_template.tf-instance-template]
