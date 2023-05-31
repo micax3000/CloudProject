@@ -2,6 +2,9 @@ steps:
   - id: 'terraform init'
     name: 'hashicorp/terraform:1.1.9'
     script: terraform init
+  - id: 'terraform destroy'
+    name: 'hashicorp/terraform:1.1.9'
+    script: terraform destroy --auto-approve
   - id: 'terraform plan'
     name: 'hashicorp/terraform:1.1.9'
     script: terraform plan
