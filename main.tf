@@ -77,12 +77,6 @@ resource "google_compute_instance_template" "tf-instance-template" {
 	docker-compose up          
     SCRIPT
 }
-resource "google_compute_instance_from_template" "instance-tf" {
- depends_on			= [google_compute_instance_template.tf-instance-template]
- name				= "tf-instance"
- zone				= "us-central1-a"
- source_instance_template	= google_compute_instance_template.tf-instance-template.self_link
-}
 resource "google_compute_instance_group_manager" "todo-instance-group" {
   name				= "todo-instance-group"
   base_instance_name		= "todo-app-1"
